@@ -25,9 +25,17 @@ jobs:
         export PATH="$HOME/proton-clang/bin:$PATH"
         export ARCH=arm64
         export SUBARCH=arm64
+        export CC=clang
+        export CROSS_COMPILE=aarch64-linux-gnu-
+        export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
         
-        make O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- vili_defconfig
-        make -j$(nproc) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+        # Tworzenie symlinków dla brakujących nazw kompilatora
+        mkdir -p $HOME/bin
+        ln -s /usr/bin/aarch64-linux-gnu-gcc $HOME/bin/aarch64-linux-android-gcc
+        export PATH="$HOME/bin:$PATH"
+
+        make O=out vili_defconfig
+        make -j$(nproc) O=out
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
